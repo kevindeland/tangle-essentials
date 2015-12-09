@@ -5,6 +5,8 @@ Tangle.controls.c_xKnob = function(el, worksheet) {
     var name = worksheet.getVariableName(el); // pos
 
     var parameter = "pos";
+
+    el.setStyles({position: "absolute", left: 8, top: 28});
     
     // get canvas info
     var canvasEl = el.getParent().getElement("canvas");
@@ -35,7 +37,7 @@ ParamsKnob.png", width:knobWidth, height:knobHeight });
 
         var pos = worksheet.getValue(parameter);
 
-        knobX = pos;
+        knobX = pos.limit(0, canvasWidth);
 
         knobY = canvasHeight / 2;
 

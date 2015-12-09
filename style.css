@@ -1,4 +1,8 @@
 
+canvas {
+    position: relative;
+    top: 20px;
+}
 
 .cursorDrag {
     cursor: pointer;
