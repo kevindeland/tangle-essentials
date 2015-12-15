@@ -23,8 +23,7 @@ Tangle.controls.c_xKnob = function(el, worksheet) {
     // initialize knob
     var knobStyle = "position:absolute; display:none; ";
     var knobWidth = 36, knobHeight = 36;
-    var knobEl = new Element("img", { style:knobStyle, src:"http://worrydream.com/ExplorableExplanations/Media/Filter\
-ParamsKnob.png", width:knobWidth, height:knobHeight });
+    var knobEl = new Element("img", { style:knobStyle, src:"./Media/FilterParamsKnobDrag.png", width:knobWidth, height:knobHeight });
     // add knob to page
     el.grab(knobEl, "bottom");
 
@@ -32,11 +31,11 @@ ParamsKnob.png", width:knobWidth, height:knobHeight });
     knobX = 0;
     knobY = 0;
 
-    
+
+    // this function will be called any time the view changes
     worksheet.setView(el, function() {
-
         var pos = worksheet.getValue(parameter);
-
+        
         knobX = pos.limit(0, canvasWidth);
 
         knobY = canvasHeight / 2;
@@ -93,7 +92,7 @@ ParamsKnob.png", width:knobWidth, height:knobHeight });
 
             isDragging = true;
             didDrag = true;
-            knobEl.set("src", "http://worrydream.com/ExplorableExplanations/Media/FilterParamsKnobDrag.png");
+            knobEl.set("src", "./Media/FilterParamsKnobDrag.png");
             updateRolloverEffects();
         },
 
@@ -112,5 +111,83 @@ ParamsKnob.png", width:knobWidth, height:knobHeight });
             updateRolloverEffects();
         }
     });
-    
+
+
+    // comparing BVTouchable with mousedown events
+    canvasEl.addEvent("mousedown", function(x) {
+        console.log("mousedown");
+        console.log(x);
+        console.log(x.event.clientX);
+        console.log(x.client.x, x.client.y);
+    });
+
+    canvasEl.addEvent("mouseup", function() {
+        console.log("mouseup");
+    });
+
+    new BVTouchable(canvasEl, {
+
+        touchDidGoDown: function (touches) {
+            console.log(touches);
+            var obj = {};
+            obj[parameter] = knobX + 10;
+
+            worksheet.setValues(obj);
+        },
+
+        touchDidMove: function (touches) {
+            console.log(touches.translation.x);
+            var knobX;
+        },
+
+        touchDidGoUp: function (touches) {
+            
+        }
+    });
+
+    var leftEl = el.getParent().getElementById("left");
+    leftEl.addEvent("mousedown", function() {
+        var obj = {};
+        var newX = knobX - 10;
+
+        newX.limit(0, canvasWidth);
+        obj[parameter] = newX;
+
+        worksheet.setValues(obj);
+    });
+
+    var rightEl = el.getParent().getElementById("right");
+    rightEl.addEvent("mousedown", function() {
+        var obj = {};
+        var newX = knobX + 10;
+
+        newX.limit(0, canvasWidth);
+        obj[parameter] = newX;
+
+        worksheet.setValues(obj);
+    });
+
+        
+    var playEl = el.getParent().getElementById("play");
+
+    var isPlaying = false;
+    playEl.addEvent("mousedown", function() {
+        isPlaying = true;
+        knobX = 0;
+        // TODO lock all the others
+        slideToTheRight();
+    });
+
+    function slideToTheRight() {
+        if (knobX >= canvasWidth)
+            return;
+
+        var obj = {}
+        var newX = knobX + 1;
+        
+        obj[parameter] = newX;
+        worksheet.setValues(obj);
+
+        setTimeout(slideToTheRight, 4);
+    }
 }

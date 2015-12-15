@@ -13,7 +13,7 @@ function initSlider (tangle) {
         update: function(model) {
 
             // wtf
-            model['pos']++;
+//            model['pos']++;
         }
     };
     
